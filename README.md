@@ -2,7 +2,9 @@
 
 Retrieval-augmented generation (RAG) is a method that improves the precision and dependability of generative AI models by incorporating information obtained from external sources.
 
-This file contains instructions to build, configure and install Ecommerce API to demonstrate Ecommerce usecase.
+This file contains instructions to build, configure and install RAG API to demonstrate RAG usecase.
+
+Refer article here, https://devbeat.hashnode.dev/retrieval-augmentation-generation-using-spring-ai
 
 ## Pre-requisites
 
@@ -36,7 +38,7 @@ c. Execute following command from project root directory to create project servi
 
 d. New jar will be created here `rag-with-spring-ai/build/libs/rag-0.0.1-SNAPSHOT.jar`. Copy this same jar in project deployment folder.
 
-e. Execute below command to start ecommerce API.
+e. Execute below command to start RAG API.
 
 - Navigate to project deployment folder and execute below command.
   `java -jar rag-0.0.1-SNAPSHOT.jar`
