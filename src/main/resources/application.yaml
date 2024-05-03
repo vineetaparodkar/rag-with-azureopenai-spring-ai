@@ -1,0 +1,82 @@
+application:
+  title: RAG API Service
+  version: v1.0
+
+logging:
+  level:
+    ROOT: INFO
+
+# Server Configuration
+server:
+  port: 8080
+  host: localhost
+  servlet:
+    context-path: /rag
+
+# Spring Configurations
+spring:
+  application:
+    name: RAG
+  main:
+    allow-bean-definition-overriding: true
+  ai:
+    vectorstore:
+      qdrant:
+        host: localhost
+        port: 6333
+        api-key: xxxxxxx
+        collection-name: rag
+    azure:
+      openai:
+        api-key: xxxxxxxxxx
+        endpoint: xxxxxxxxxxxx
+        embedding:
+          enabled: true
+          api-key: xxxxxxxx
+          options:
+            deployment-name: text-embedding-ada-002-deployment-name
+        chat:
+          enabled: true
+          options:
+            deployment-name: gpt-3.5-turbo-deployment-name
+            temperature: 0.5
+            maxTokens: 800
+            topP: 1
+            frequencyPenalty: 0
+            api-key: xxxxx
+
+# OpenAPI Configurations
+openapi:
+  title: RAG API Service
+  version: v1.0
+  description: RAG API service
+  termsOfService:
+  contact:
+    email:
+    name:
+    url:
+  license:
+    name:
+    url:
+
+# Default Open API endpoint Specifications
+# api docs endpoint path
+springdoc:
+  api-docs.path: /v3/api-docs
+  # customise endpoint for Swagger UI
+  swagger-ui:
+    path: /swagger-ui
+    # disable default petstore Swagger
+    disable-swagger-default-url: true
+    # disable schemas/models in swagger ui
+    defaultModelsExpandDepth=-1:
+
+#web-config-origin-url
+web:
+  config:
+    allowed-origin-urls:
+      http://localhost:3000,
+      http://localhost:3001,
+      http://localhost:3002,
+    max-age: 3600
+
