@@ -55,28 +55,41 @@ public class ChatServiceImpl implements ChatService {
     public String askLlm(String query) {
         List<Document> documentList = vectorStore.similaritySearch(query);
 
+        Set<String> collect = documentList.stream().map(Document::getMetadata).map(m -> (String) m.get("file_name")).collect(Collectors.toSet());
+
+        String fileNames = String.join(",", collect);
+
         String systemMessageTemplate = """
-                Answer the question in JSON format but do not add ```json``` , based solely on the provided CONTEXT.
-                If the answer is not found in the context, respond 'I don't know'.
+                You are a helpful assistant helping users with their questions.
+                Use the information from the CONTEXT section to provide accurate and detailed answers. If unsure or if the answer
+                isn't found in either the CONTEXT section, simply state that you don't know the answer.
+                Respond with "No relevant information found." if no relevant information were found from the CONTEXT section.
+                                
+                After answering the question, provide the names of the files that was referred to. Use REFERENCES section below to provide details of the file names.
+                                
                 CONTEXT:
-                     {CONTEXT}
+                {CONTEXT}
+                                
+                REFERENCES:
+                {fileNames}
+
                 """;
 
         Message systemMessage = new SystemPromptTemplate(systemMessageTemplate)
-                .createMessage(Map.of("CONTEXT", documentList));
+                .createMessage(Map.of(
+                        "CONTEXT", documentList,
+                        "fileNames", fileNames
+                ));
         UserMessage userMessage = new UserMessage(query);
         Prompt prompt = new Prompt(List.of(systemMessage, userMessage));
-        OpenAIClient openAIClient = new OpenAIClientBuilder()
-                .credential(new AzureKeyCredential(apiKey))
-                .endpoint(azureOpenAiChatEndpoint)
-                .buildClient();
-        AzureOpenAiChatOptions azureOpenAiChatOptions = AzureOpenAiChatOptions.builder()
-                .withDeploymentName(deploymentName)
+        OpenAiApi aiApi = new OpenAiApi(apiKey);
+        OpenAiChatOptions openAiChatOptions = OpenAiChatOptions.builder()
+                .withModel(model)
                 .withTemperature(temperature)
                 .withMaxTokens(maxToken)
                 .build();
-        AzureOpenAiChatClient azureOpenAiChatClient = new AzureOpenAiChatClient(openAIClient, azureOpenAiChatOptions);
-        ChatResponse response = azureOpenAiChatClient.call(prompt);
+        OpenAiChatClient openAiChatClient = new OpenAiChatClient(aiApi, openAiChatOptions);
+        ChatResponse response = openAiChatClient.call(prompt);
         String responseContent = response.getResult().getOutput().getContent();
         return responseContent;
 
